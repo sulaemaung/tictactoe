@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    .cell{
+    width:80px;
+    height: 80px;
+    line-height: 80px;
+    font-size: 40px;
+    cursor: pointer;
+    border:1px solid;
+    box-shadow: 0 0 0 2px rgb(225, 255, 201);
+
+}
+    #container{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-align: center;
+}
+    #cellContainer{
+    display: grid;
+    grid-template-columns: repeat(3,auto);
+    margin: auto;
+    width:225px;
+}
+    #restart{
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 99, 99);
+        border-radius: 4px;
+        box-shadow: 4px rgb(0, 0, 0);
+        padding: 6px;
+      
+    }
+
+    </style>
+<body>
+   
+    <div id="container">
+        <div id="cellContainer">
+            <div cellIndex="0" class="cell"></div>
+            <div cellIndex="1" class="cell"></div>
+            <div cellIndex="2" class="cell"></div>
+            <div cellIndex="3" class="cell"></div>
+            <div cellIndex="4" class="cell"></div>
+            <div cellIndex="5" class="cell"></div>
+            <div cellIndex="6" class="cell"></div>
+            <div cellIndex="7" class="cell"></div>
+            <div cellIndex="8" class="cell"></div>
+        </div>
+        <h2 id="status"></h2>
+
+        <button id="restart">Restart</button>
+
+    </div>
+<script>
+const cells=document.querySelectorAll(".cell");
+
+const statusText=document.querySelector("#status");
+
+const restartBtn=document.querySelector("#restart");
+
+const win=[
+
+    [0,1,2],
+
+    [3,4,5],
+
+    [6,7,8],
+
+    [0,3,6],
+
+    [1,4,7],
+
+    [2,5,8],
+
+    [0,4,8],
+
+    [2,4,6]
+
+];
+
+let options=["","","","","","","","",""];
+
+let currentPlayer="X";
+
+let running = false;
+startGame();
+
+
+
+function startGame(){
+
+    cells.forEach(cell=>cell.addEventListener("click",function cellClicked(){
+
+    const cellIndex = this.getAttribute("cellIndex");
+    if(options[cellIndex] != "" || !running){
+    return;
+}
+update(this,cellIndex);
+
+checkWinner();
+
+}));
+
+    restartBtn.addEventListener("click",restartGame);
+    statusText.textContent=`${currentPlayer}'s turn`;
+    running = true;
+
+}
+
+function update(cell,index){
+
+    options[index]=currentPlayer;
+    cell.textContent=currentPlayer;
+
+}
+
+function changePlayer(){
+
+    currentPlayer=(currentPlayer == "X") ? "O" : "X";
+    statusText.textContent = `${currentPlayer}'s turn`;
+
+}
+
+function checkWinner(){
+
+    let roundWon=false;
+    for(let i=0;i<win.length;i++){
+
+        const condition=win[i];
+
+        const cellA=options[condition[0]];
+
+        const cellB=options[condition[1]];
+
+        const cellC=options[condition[2]];
+
+         if(cellA=="" || cellB=="" || cellC==""){
+            continue;
+
+        }
+
+        if(cellA==cellB&&cellB==cellC){
+
+            roundWon = true;
+            break;
+
+        }
+
+    }
+    if(roundWon){
+
+        statusText.textContent = `${currentPlayer} wins!`;
+        running = false;
+
+    }else if(!options.includes("")){
+
+        statusText.textContent = `Draw!`;
+        running = false;
+
+    } else{
+        changePlayer();
+
+    }
+
+}
+
+function restartGame(){
+
+    currentPlayer="X";
+    options=["", "", "", "", "", "", "", "", ""];
+    statusText.textContent = `${currentPlayer}'s turn`;
+    cells.forEach(cell => cell.textContent = "");
+    running = true;
+
+}
+ </script>
+
+</body>
+</html>
